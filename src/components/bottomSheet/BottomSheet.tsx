@@ -225,12 +225,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
     const isLayoutCalculated = useDerivedValue(() => {
       let isContainerHeightCalculated = false;
       const { containerHeight, handleHeight } = animatedLayoutState.get();
-      //container height was provided.
-      if (containerHeight !== null || containerHeight !== undefined) {
-        isContainerHeightCalculated = true;
-      }
-      // container height did set.
-      if (containerHeight !== INITIAL_LAYOUT_VALUE) {
+      //container height was provided and set not to initial value
+      if (
+        containerHeight !== null &&
+        containerHeight !== undefined &&
+        containerHeight !== INITIAL_LAYOUT_VALUE
+      ) {
         isContainerHeightCalculated = true;
       }
 
@@ -659,7 +659,12 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
           status === KEYBOARD_STATUS.SHOWN &&
           position !== closedDetentPosition
         ) {
-          index = highestDetentPosition ?? DEFAULT_KEYBOARD_INDEX;
+          if (detents !== undefined && highestDetentPosition !== undefined) {
+            index = detents.indexOf(highestDetentPosition);
+          }
+          if (index === -1) {
+            index = DEFAULT_KEYBOARD_INDEX;
+          }
         }
 
         /**
@@ -1785,7 +1790,7 @@ const BottomSheetComponent = forwardRef<BottomSheet, BottomSheetProps>(
               <BackdropComponent
                 animatedIndex={animatedIndex}
                 animatedPosition={animatedPosition}
-                style={StyleSheet.absoluteFillObject}
+                style={StyleSheet.absoluteFill}
               />
             ) : null}
             <BottomSheetHostingContainer
